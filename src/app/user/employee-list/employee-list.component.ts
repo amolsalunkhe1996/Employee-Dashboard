@@ -11,20 +11,19 @@ import { EmployeeService } from 'src/app/services/employee-service.service';
 })
 export class EmployeeListComponent implements OnInit, OnDestroy {
 
-  allEmployees: Employee[] = [];
+  serverEmployees: Employee[] = [];   
   employees: Employee[] = [];
+
   loading: boolean = true;
   error: string = '';
 
   searchTerm: string = '';
   selectedDept: string = '';
   selectedStatus: string = '';
-  sortBy: string = 'name';
 
   currentPage: number = 1;
   pageSize: number = 3;
   totalPages: number = 1;
-
   visiblePages: (number | string)[] = [];
 
   departmentOptions = [
@@ -37,13 +36,9 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   statusOptions = [
     { label: 'All Statuses', value: '' },
+    { label: 'All Statuses', value: '' },
     { label: 'Active', value: 'Active' },
     { label: 'Inactive', value: 'Inactive' }
-  ];
-
-  sortOptions = [
-    { label: 'Sort by Name', value: 'name' },
-    { label: 'Sort by Date', value: 'joiningDate' }
   ];
 
   private searchSubject = new Subject<string>();
@@ -51,7 +46,6 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   constructor(
     private employeeService: EmployeeService,
-    private router: Router
   ) { }
 
   ngOnInit() {
@@ -59,9 +53,9 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       debounceTime(300),
       takeUntil(this.destroy$)
     ).subscribe((term: string) => {
-      this.searchTerm = term;
-      this.currentPage = 1;
-      this.getEmployeesList();
+      this.searchTerm = term.toLowerCase().trim();
+      this.currentPage = 1; 
+      this.updatePaginatedData();
     });
 
     this.getEmployeesList();
@@ -72,14 +66,6 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = '';
 
-    if (this.searchTerm) {
-      params['search'] = this.searchTerm;
-    }
-
-    if (this.sortBy) {
-      params['sortBy'] = this.sortBy;
-    }
-
     if (this.selectedStatus) {
       params['status'] = this.selectedStatus;
     }
@@ -88,21 +74,32 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       params['dept'] = this.selectedDept;
     }
 
-    this.employeeService.getEmployeesServerSide(params).pipe(takeUntil(this.destroy$)).subscribe({
+    this.employeeService.getEmployeesServerSide(params).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
       next: (data: Employee[]) => {
-        this.allEmployees = data;
+        this.serverEmployees = data;
         this.updatePaginatedData();
         this.loading = false;
       },
       error: () => {
-        this.error = 'Failed to load employees. Please check JSON Server connection.';
+        this.error = 'Failed to load employees. Please check server connection.';
         this.loading = false;
       }
     });
   }
 
   updatePaginatedData() {
-    this.totalPages = Math.ceil(this.allEmployees.length / this.pageSize) || 1;
+    let filteredList = this.serverEmployees;
+
+    if (this.searchTerm) {
+      filteredList = this.serverEmployees.filter(emp => 
+        (emp.name && emp.name.toLowerCase().includes(this.searchTerm)) ||
+        (emp.email && emp.email.toLowerCase().includes(this.searchTerm))
+      );
+    }
+
+    this.totalPages = Math.ceil(filteredList.length / this.pageSize) || 1;
 
     if (this.currentPage > this.totalPages) {
       this.currentPage = this.totalPages;
@@ -114,7 +111,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     const startIndex = (this.currentPage - 1) * this.pageSize;
     const endIndex = startIndex + this.pageSize;
 
-    this.employees = this.allEmployees.slice(startIndex, endIndex);
+    this.employees = filteredList.slice(startIndex, endIndex);
 
     this.generatePagination();
   }
@@ -130,10 +127,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       }
     } else {
       pages.push(1);
-
-      if (current > 3) {
-        pages.push('...');
-      }
+      if (current > 3) pages.push('...');
 
       const start = Math.max(2, current - 1);
       const end = Math.min(total - 1, current + 1);
@@ -142,17 +136,15 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
         pages.push(i);
       }
 
-      if (current < total - 2) {
-        pages.push('...');
-      }
+      if (current < total - 2) pages.push('...');
       pages.push(total);
     }
 
     this.visiblePages = pages;
   }
 
-  onSearchChange(event: any) {
-    this.searchSubject.next(event);
+  onSearchChange(searchValue: string) {
+    this.searchSubject.next(searchValue);
   }
 
   onDeptChange(event: any) {

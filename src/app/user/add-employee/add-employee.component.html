@@ -34,7 +34,7 @@
             <label class="form-label fw-semibold text-secondary">Full Name <span class="text-danger">*</span></label>
             <input type="text" formControlName="name" class="form-control" placeholder="e.g. Amol Patil"
               [ngClass]="{ 'is-invalid': f['name'].touched && f['name'].errors }">
-            <div *ngIf="f['name'].touched &&f['name'].dirty && f['name'].errors" class="invalid-feedback">
+            <div *ngIf="f['name'].touched  && f['name'].errors" class="invalid-feedback">
               <span *ngIf="f['name'].errors['required']">Full Name is required.</span>
               <span *ngIf="f['name'].errors['minlength']">Name must be at least 3 characters.</span>
             </div>
