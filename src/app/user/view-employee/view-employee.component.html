@@ -1,1 +1,91 @@
-<p>view-employee works!</p>
+<div class="container my-4">
+
+  <!-- Header & Back Navigation -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <button (click)="goBack()" class="btn btn-outline-secondary btn-sm px-3">
+      ← Back to Directory
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="text-muted small mt-2">Loading details...</p>
+  </div>
+
+  <!-- Error Alert -->
+  <div *ngIf="error" class="alert alert-danger border-0 shadow-sm">
+    {{ error }}
+  </div>
+
+  <!-- Main View Profile Card (8 Fields Included) -->
+  <div *ngIf="!loading && !error && employee" class="card border-0 shadow-sm rounded-3 overflow-hidden">
+    
+    <!-- Top Banner: 1. Name & 2. Status -->
+    <div class="bg-primary bg-opacity-10 p-4 border-bottom">
+      <div class="d-flex align-items-center">
+        <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 64px; height: 64px; font-size: 24px;">
+          {{ employee.name ? employee.name.charAt(0).toUpperCase() : 'E' }}
+        </div>
+        <div>
+          <!-- Field 1: Name -->
+          <h4 class="fw-bold mb-1 text-dark">{{ employee.name }}</h4>
+          <!-- Field 2: Status -->
+          <span class="badge rounded-pill px-3 py-1" 
+                [ngClass]="employee.status === 'Active' ? 'bg-success text-white' : 'bg-danger text-white'">
+            ● {{ employee.status }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Body -->
+    <div class="card-body p-4">
+      <div class="row g-4">
+
+        <!-- Field 3: Email -->
+        <div class="col-md-6">
+          <label class="text-muted small text-uppercase fw-bold d-block mb-1">Email Address</label>
+          <p class="fw-semibold text-dark mb-0">{{ employee.email || 'N/A' }}</p>
+        </div>
+
+        <!-- Field 4: Phone -->
+        <div class="col-md-6">
+          <label class="text-muted small text-uppercase fw-bold d-block mb-1">Phone Number</label>
+          <p class="fw-semibold text-dark mb-0">{{ employee.phone || 'N/A' }}</p>
+        </div>
+
+        <!-- Field 5: Department -->
+        <div class="col-md-6">
+          <label class="text-muted small text-uppercase fw-bold d-block mb-1">Department</label>
+          <span class="badge bg-light text-dark border px-3 py-2 fs-6">
+            {{ employee.department || 'N/A' }}
+          </span>
+        </div>
+
+        <!-- Field 6: Designation -->
+        <div class="col-md-6">
+          <label class="text-muted small text-uppercase fw-bold d-block mb-1">Designation</label>
+          <p class="fw-semibold text-dark mb-0">{{ employee.designation || 'N/A' }}</p>
+        </div>
+
+        <!-- Field 7: Joining Date -->
+        <div class="col-md-6">
+          <label class="text-muted small text-uppercase fw-bold d-block mb-1">Joining Date</label>
+          <p class="fw-semibold text-dark mb-0">{{ (employee.joiningDate | date:'mediumDate') || 'N/A' }}</p>
+        </div>
+
+        <!-- Field 8: Salary -->
+        <div class="col-md-6">
+          <label class="text-muted small text-uppercase fw-bold d-block mb-1">Salary</label>
+          <p class="fw-semibold text-dark mb-0">
+            {{ employee.salary ? (employee.salary | currency:'INR':'symbol':'1.0-0') : 'N/A' }}
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

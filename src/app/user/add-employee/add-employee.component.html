@@ -1,1 +1,159 @@
-<p>add-employee works!</p>
+<div class="container my-4" style="max-width: 850px;">
+
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h3 class="fw-bold text-dark mb-1">
+        {{ isEditMode ? 'Edit Employee Profile' : 'Add New Employee' }}
+      </h3>
+      <p class="text-muted small mb-0">
+        {{ isEditMode ? 'Update existing employee record in the system.' : 'Fill in the information to add a new employee.' }}
+      </p>
+    </div>
+    <button type="button" (click)="onCancel()" class="btn btn-outline-secondary btn-sm px-3">
+      ← Back
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5 card border-0 shadow-sm rounded-3">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="text-muted small mt-2 mb-0">Loading employee details...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger border-0 shadow-sm mb-4" role="alert">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading" class="card border-0 shadow-sm rounded-3">
+    <div class="card-body p-4">
+
+      <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold text-secondary">Full Name <span class="text-danger">*</span></label>
+            <input 
+              type="text" 
+              formControlName="name" 
+              class="form-control" 
+              placeholder="e.g. Amol Patil"
+              [ngClass]="{ 'is-invalid': f['name'].touched && f['name'].errors }">
+            <div *ngIf="f['name'].touched &&f['name'].dirty && f['name'].errors" class="invalid-feedback">
+              <span *ngIf="f['name'].errors['required']">Full Name is required.</span>
+              <span *ngIf="f['name'].errors['minlength']">Name must be at least 3 characters.</span>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold text-secondary">Email Address <span class="text-danger">*</span></label>
+            <input 
+              type="email" 
+              formControlName="email" 
+              class="form-control" 
+              placeholder="e.g. amol@company.com"
+              [ngClass]="{ 'is-invalid': f['email'].touched && f['email'].errors }">
+            <div *ngIf="f['email'].touched && f['email'].errors" class="invalid-feedback">
+              <span *ngIf="f['email'].errors['required']">Email address is required.</span>
+              <span *ngIf="f['email'].errors['email']">Please enter a valid email address.</span>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold text-secondary">Phone Number <span class="text-danger">*</span></label>
+            <input 
+              type="text" 
+              formControlName="phone" 
+              class="form-control" 
+              placeholder="e.g. 9876543210"
+              [ngClass]="{ 'is-invalid': f['phone'].touched && f['phone'].errors }">
+            <div *ngIf="f['phone'].touched && f['phone'].errors" class="invalid-feedback">
+              <span *ngIf="f['phone'].errors['required']">Phone number is required.</span>
+              <span *ngIf="f['phone'].errors['pattern']">Please enter a valid 10-digit phone number.</span>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold text-secondary">Department <span class="text-danger">*</span></label>
+            <select 
+              formControlName="department" 
+              class="form-select"
+              [ngClass]="{ 'is-invalid': f['department'].touched && f['department'].errors }">
+              <option value="" disabled>Select Department</option>
+              <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+            </select>
+            <div *ngIf="f['department'].touched && f['department'].errors" class="invalid-feedback">
+              Department selection is required.
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold text-secondary">Designation <span class="text-danger">*</span></label>
+            <input 
+              type="text" 
+              formControlName="designation" 
+              class="form-control" 
+              placeholder="e.g. Software Engineer"
+              [ngClass]="{ 'is-invalid': f['designation'].touched && f['designation'].errors }">
+            <div *ngIf="f['designation'].touched && f['designation'].errors" class="invalid-feedback">
+              Designation is required.
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold text-secondary">Joining Date <span class="text-danger">*</span></label>
+            <input 
+              type="date" 
+              formControlName="joiningDate" 
+              class="form-control"
+                  [min]="today"
+
+              [ngClass]="{ 'is-invalid': f['joiningDate'].touched && f['joiningDate'].errors }">
+            <div *ngIf="f['joiningDate'].touched && f['joiningDate'].errors" class="invalid-feedback">
+              Joining date is required.
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold text-secondary">Salary (₹) <span class="text-danger">*</span></label>
+            <input 
+              type="number" 
+              formControlName="salary" 
+              class="form-control" 
+              placeholder="e.g. 50000"
+              [ngClass]="{ 'is-invalid': f['salary'].touched && f['salary'].errors }">
+            <div *ngIf="f['salary'].touched && f['salary'].errors" class="invalid-feedback">
+              <span *ngIf="f['salary'].errors['required']">Salary is required.</span>
+              <span *ngIf="f['salary'].errors['min']">Salary cannot be less then 1.</span>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold text-secondary">Status <span class="text-danger">*</span></label>
+            <select 
+              formControlName="status" 
+              class="form-select"
+              [ngClass]="{ 'is-invalid': f['status'].touched && f['status'].errors }">
+              <option *ngFor="let st of statuses" [value]="st">{{ st }}</option>
+            </select>
+            <div *ngIf="f['status'].touched && f['status'].errors" class="invalid-feedback">
+              Status selection is required.
+            </div>
+          </div>
+
+        </div>
+
+        <div class="d-flex align-items-center justify-content-end gap-2 mt-4 pt-3 border-top">
+          <button type="button" (click)="onCancel()" class="btn btn-light px-4 border">
+            Cancel
+          </button>
+          <button type="submit" [disabled]="submitting" class="btn btn-primary px-4 shadow-sm">
+            <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            {{ isEditMode ? 'Update Employee' : 'Save Employee' }}
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>

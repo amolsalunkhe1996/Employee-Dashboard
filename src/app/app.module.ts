@@ -6,19 +6,27 @@ import { AppComponent } from './app.component';
 import { EmployeeListComponent } from './user/employee-list/employee-list.component';
 import { AddEmployeeComponent } from './user/add-employee/add-employee.component';
 import { ViewEmployeeComponent } from './user/view-employee/view-employee.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClientModule, provideHttpClient } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @NgModule({
   declarations: [
     AppComponent,
-    EmployeeListComponent,
-    AddEmployeeComponent,
-    ViewEmployeeComponent
+   
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NgbModule,
+    HttpClientModule,
+    NgSelectModule
+    
   ],
-  providers: [],
+  providers: [
+    provideHttpClient()
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

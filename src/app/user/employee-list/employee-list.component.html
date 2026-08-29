@@ -1,1 +1,159 @@
-<p>employee-list works!</p>
+<div class="container my-4">
+  <div class="row align-items-center mb-4">
+    <div class="col-md-6">
+      <h3 class="fw-bold text-dark mb-1">Employee Directory</h3>
+      <p class="text-muted small mb-0">Manage and view all your company employees in one place.</p>
+    </div>
+    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+      <a routerLink="/employees/add" class="btn btn-primary px-4 py-2 shadow-sm rounded-3">
+        + Add New Employee
+      </a>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-3 mb-4">
+    <div class="card-body p-3">
+      <div class="row g-3 align-items-center">
+
+        <div class="col-lg-4 col-md-6">
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0">🔍</span>
+            <input type="text" class="form-control bg-light border-start-0" placeholder="Search by name or email..."
+              (input)="onSearchChange(search)" #search>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <ng-select [items]="departmentOptions" bindLabel="label" bindValue="value" placeholder="All Departments"
+            [clearable]="false" [searchable]="false" [(ngModel)]="selectedDept" (change)="onDeptChange($event)">
+          </ng-select>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <ng-select [items]="statusOptions" bindLabel="label" bindValue="value" placeholder="All Statuses"
+            [clearable]="false" [searchable]="false" [(ngModel)]="selectedStatus" (change)="onStatusChange($event)">
+          </ng-select>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="text-muted small mt-2">Fetching employee data...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger border-0 shadow-sm" role="alert">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="card border-0 shadow-sm rounded-3 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light text-secondary border-bottom">
+          <tr class="text-uppercase small fw-bold">
+            <th class="ps-4 py-3">Employee Name</th>
+            <th class="py-3">Department</th>
+            <th class="py-3">Designation</th>
+            <th class="py-3">Joining Date</th>
+            <th class="py-3">Status</th>
+            <th class="text-end pe-4 py-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let emp of employees">
+            <td class="ps-4 py-3">
+              <div class="d-flex align-items-center">
+                <div
+                  class="rounded-circle bg-primary bg-opacity-10 text-primary fw-bold d-flex align-items-center justify-content-center me-3"
+                  style="width: 40px; height: 40px;">
+                  {{ emp.name ? emp.name.charAt(0).toUpperCase() : 'E' }}
+                </div>
+                <div>
+                  <a [routerLink]="['detail', emp.id]" class="text-decoration-none fw-bold text-dark d-block">
+                    {{ emp.name }}
+                  </a>
+                  <small class="text-muted">{{ emp.email }}</small>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge bg-light text-dark border px-2 py-1">
+                {{ emp.department }}
+              </span>
+            </td>
+
+            <td class="text-secondary fw-semibold">
+              {{ emp.designation }}
+            </td>
+
+            <td class="text-muted small">
+              {{ emp.joiningDate | date:'mediumDate' }}
+            </td>
+
+            <td>
+              <span class="badge rounded-pill px-3 py-2"
+                [ngClass]="emp.status === 'Active' ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger'">
+                ● {{ emp.status }}
+              </span>
+            </td>
+
+            <td class="text-end pe-4">
+              <div class="btn-group">
+                <a [routerLink]="['/employees/edit', emp.id]" class="btn btn-sm btn-outline-secondary">
+                  Edit
+                </a>
+                <button (click)="deleteEmployee(emp.id!)" class="btn btn-sm btn-outline-danger">
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="employees.length === 0">
+            <td colspan="6" class="text-center py-5 text-muted">
+              <div class="py-3">
+                <p class="mb-1 fw-semibold">No employees found</p>
+                <small>Try adjusting your search query or filters.</small>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div
+      class="card-footer bg-white border-top py-3 d-flex flex-column flex-md-row align-items-center justify-content-between">
+      <small class="text-muted mb-2 mb-md-0">
+        Showing Page <strong class="text-dark">{{ currentPage }}</strong> of <strong class="text-dark">{{ totalPages
+          }}</strong>
+      </small>
+
+      <div class="d-flex align-items-center gap-1">
+        <button class="btn btn-sm btn-outline-secondary px-3" [disabled]="currentPage === 1"
+          (click)="onPageChange(currentPage - 1)">
+          ‹ Prev
+        </button>
+
+        <ng-container *ngFor="let page of visiblePages">
+          <button *ngIf="page !== '...'" class="btn btn-sm px-3"
+            [ngClass]="page === currentPage ? 'btn-primary fw-bold shadow-sm' : 'btn-outline-secondary'"
+            (click)="onPageChange(page)">
+            {{ page }}
+          </button>
+
+          <span *ngIf="page === '...'" class="px-2 text-muted fw-bold">
+            ...
+          </span>
+        </ng-container>
+
+        <button class="btn btn-sm btn-outline-secondary px-3"
+          [disabled]="currentPage >= totalPages || employees.length === 0" (click)="onPageChange(currentPage + 1)">
+          Next ›
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

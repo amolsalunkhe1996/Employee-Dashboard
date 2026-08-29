@@ -1,0 +1,71 @@
+{
+  "employees": [
+    {
+      "id": "2",
+      "name": "Sarah Wilson",
+      "email": "sarah@gmail.com",
+      "phone": "9876543211",
+      "department": "HR",
+      "designation": "HR Executive",
+      "joiningDate": "2022-06-10",
+      "salary": 50000,
+      "status": "Active"
+    },
+    {
+      "id": "3",
+      "name": "Michael Brown",
+      "email": "michael@gmail.com",
+      "phone": "9876543212",
+      "department": "Finance",
+      "designation": "Accountant",
+      "joiningDate": "2021-03-20",
+      "salary": 55000,
+      "status": "Inactive"
+    },
+    {
+      "id": "4",
+      "name": "Emily Davis",
+      "email": "emily@gmail.com",
+      "phone": "9876543213",
+      "department": "IT",
+      "designation": "Frontend Developer",
+      "joiningDate": "2024-02-01",
+      "salary": 70000,
+      "status": "Active"
+    },
+    {
+      "id": "5",
+      "name": "Robert Johnson",
+      "email": "robert@gmail.com",
+      "phone": "9876543214",
+      "department": "Sales",
+      "designation": "Sales Manager",
+      "joiningDate": "2020-08-15",
+      "salary": 65000,
+      "status": "Active"
+    },
+    {
+      "id": "6",
+      "name": "Jessica Taylor",
+      "email": "jessica@gmail.com",
+      "phone": "9876543215",
+      "department": "Marketing",
+      "designation": "Marketing Executive",
+      "joiningDate": "2023-09-12",
+      "salary": 48000,
+      "status": "Inactive"
+    },
+    {
+      "id": "8",
+      "name": "Lisa Anderson",
+      "email": "lisa@gmail.com",
+      "phone": "9876543217",
+      "department": "HR",
+      "designation": "HR Manager",
+      "joiningDate": "2021-07-18",
+      "salary": 68000,
+      "status": "Active"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
