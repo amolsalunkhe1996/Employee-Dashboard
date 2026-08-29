@@ -20,11 +20,11 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   selectedDept: string = '';
   selectedStatus: string = '';
   sortBy: string = 'name';
-  
+
   currentPage: number = 1;
   pageSize: number = 3;
   totalPages: number = 1;
-  
+
   visiblePages: (number | string)[] = [];
 
   departmentOptions = [
@@ -52,7 +52,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   constructor(
     private employeeService: EmployeeService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.searchSubject.pipe(
@@ -103,7 +103,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   updatePaginatedData() {
     this.totalPages = Math.ceil(this.allEmployees.length / this.pageSize) || 1;
-    
+
     if (this.currentPage > this.totalPages) {
       this.currentPage = this.totalPages;
     }
@@ -113,7 +113,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
     const startIndex = (this.currentPage - 1) * this.pageSize;
     const endIndex = startIndex + this.pageSize;
-    
+
     this.employees = this.allEmployees.slice(startIndex, endIndex);
 
     this.generatePagination();
@@ -151,7 +151,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     this.visiblePages = pages;
   }
 
-  onSearchChange(event:any) {
+  onSearchChange(event: any) {
     this.searchSubject.next(event);
   }
 

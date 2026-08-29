@@ -23,7 +23,7 @@ export class ViewEmployeeComponent {
     private employeeService: EmployeeService
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     if(this.route.snapshot.paramMap.get('id')){
        this.editId = this.route.snapshot.paramMap.get('id');
     }
@@ -36,7 +36,7 @@ export class ViewEmployeeComponent {
     }
   }
 
-  fetchEmployeeById(id: string): void {
+  fetchEmployeeById(id: string) {
     this.loading = true;
     this.employeeService.getEmployeeById(this.editId).pipe(
       takeUntil(this.destroy$)
@@ -52,11 +52,11 @@ export class ViewEmployeeComponent {
     });
   }
 
-  goBack(): void {
+  goBack() {
     this.router.navigate(['/employees']);
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
   }

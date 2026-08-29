@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import {  EmployeePayload } from 'src/app/models/employee-modal';
+import { EmployeePayload } from 'src/app/models/employee-modal';
 import { EmployeeService } from 'src/app/services/employee-service.service';
 
 @Component({
@@ -24,7 +24,7 @@ export class AddEmployeeComponent {
   statuses: string[] = ['Active', 'Inactive'];
 
   private destroy$ = new Subject<void>();
-  today:any
+  today: any
 
   constructor(
     private fb: FormBuilder,
@@ -46,10 +46,10 @@ export class AddEmployeeComponent {
 
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
 
-      const today = new Date();
-     this.today = today.toISOString().split('T')[0];
+    const today = new Date();
+    this.today = today.toISOString().split('T')[0];
 
 
     this.editId = this.route.snapshot.paramMap.get('id');
@@ -141,7 +141,7 @@ export class AddEmployeeComponent {
     this.router.navigate(['/employees']);
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
   }
