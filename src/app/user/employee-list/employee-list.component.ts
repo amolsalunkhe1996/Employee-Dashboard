@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
 import { Employee } from 'src/app/models/employee-modal';
 import { EmployeeService } from 'src/app/services/employee-service.service';
@@ -14,8 +13,8 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   serverEmployees: Employee[] = [];   
   employees: Employee[] = [];
 
-  loading: boolean = true;
-  error: string = '';
+  loading = signal<boolean>(true);
+  error = signal<string>('');
 
   searchTerm: string = '';
   selectedDept: string = '';
@@ -36,7 +35,6 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   statusOptions = [
     { label: 'All Statuses', value: '' },
-    { label: 'All Statuses', value: '' },
     { label: 'Active', value: 'Active' },
     { label: 'Inactive', value: 'Inactive' }
   ];
@@ -45,7 +43,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(
-    private employeeService: EmployeeService,
+    private employeeService: EmployeeService
   ) { }
 
   ngOnInit() {
@@ -63,8 +61,9 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   getEmployeesList() {
     const params: any = {};
-    this.loading = true;
-    this.error = '';
+    
+    this.loading.set(true);
+    this.error.set('');
 
     if (this.selectedStatus) {
       params['status'] = this.selectedStatus;
@@ -80,11 +79,11 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       next: (data: Employee[]) => {
         this.serverEmployees = data;
         this.updatePaginatedData();
-        this.loading = false;
+        this.loading.set(false); 
       },
       error: () => {
-        this.error = 'Failed to load employees. Please check server connection.';
-        this.loading = false;
+        this.error.set('Failed to load employees. Please check server connection.');
+        this.loading.set(false);
       }
     });
   }
